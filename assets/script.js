@@ -18,7 +18,7 @@ $(document).ready(function () {
         const email = $("#add-user-email").val();
 
         try {
-          const response = await fetch("http://localhost:3000/users", {
+          const response = await fetch("/users", {  // Use relative URL here
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ Name: name, Email: email }),
@@ -44,7 +44,7 @@ $(document).ready(function () {
         const customerId = $("#edit-user-customer-id").val();
 
         try {
-          const response = await fetch(`http://localhost:3000/users/${id}`, {
+          const response = await fetch(`/users/${id}`, {  // Use relative URL here
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -70,7 +70,7 @@ $(document).ready(function () {
         const id = $("#edit-user-id").val();
 
         try {
-          const response = await fetch(`http://localhost:3000/users/${id}`, {
+          const response = await fetch(`/users/${id}`, {  // Use relative URL here
             method: "DELETE",
           });
 
@@ -113,7 +113,7 @@ $(document).ready(function () {
     currentPage = page;
 
     try {
-      const response = await fetch("http://localhost:3000/users");
+      const response = await fetch("/users");  // Use relative URL here
       const data = await response.json();
 
       if (!response.ok) {
@@ -157,11 +157,11 @@ $(document).ready(function () {
     paginationControls.empty();
 
     for (let i = 1; i <= totalPages; i++) {
-      const pageItem = $(
-        `<li class="page-item ${
-          i === currentPage ? "active" : ""
-        }"><a class="page-link" href="#">${i}</a></li>`
-      );
+      const pageItem = $(`
+        <li class="page-item ${i === currentPage ? "active" : ""}">
+          <a class="page-link" href="#">${i}</a>
+        </li>
+      `);
       pageItem.on("click", () => fetchData(i));
       paginationControls.append(pageItem);
     }

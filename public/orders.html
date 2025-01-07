@@ -143,7 +143,19 @@
 
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(async function () {
+        let apiUrl;
+
+        // Fetch API_URL from the server
+        try {
+            const configResponse = await fetch('/config');
+            const config = await configResponse.json();
+            apiUrl = config.API_URL;
+        } catch (error) {
+            console.error("Error fetching API_URL from server:", error);
+            return;
+        }
+
         // Declare modal instances
         const addOrderModal = new bootstrap.Modal(document.getElementById('add-order-modal'));
         const editOrderModal = new bootstrap.Modal(document.getElementById('edit-order-modal'));
@@ -177,7 +189,7 @@
 
         // Fetch orders and update the table
         function fetchOrders() {
-            $.get('http://localhost:3000/orders', function (data) {
+            $.get(`${apiUrl}/orders`, function (data) {
                 const tableBody = $('#orderTableBody');
                 tableBody.empty();
                 data.forEach(order => {
@@ -232,7 +244,7 @@
             };
 
             $.ajax({
-                url: 'http://localhost:3000/orders',
+                url: `${apiUrl}/orders`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(orderData),
@@ -261,7 +273,7 @@
 
         // Fetch products to populate product dropdown in the modal
         function fetchProducts() {
-            $.get('http://localhost:3000/products', function (products) {
+            $.get(`${apiUrl}/products`, function (products) {
                 const productSelect = $('#add-product-id');
                 productSelect.empty();
                 products.forEach(product => {
@@ -281,7 +293,7 @@
 
         // Fetch customers to populate customer dropdown in the modal
         function fetchCustomers() {
-            $.get('http://localhost:3000/users', function (users) {
+            $.get(`${apiUrl}/users`, function (users) {
                 const customerSelect = $('#add-customer-id');
                 customerSelect.empty();
                 users.forEach(user => {
@@ -294,7 +306,7 @@
 
         // Open modal to edit an order
         window.openEditOrderModal = (orderID) => {
-            $.get(`http://localhost:3000/orders/${orderID}`, function (order) {
+            $.get(`${apiUrl}/orders/${orderID}`, function (order) {
                 $('#edit-status').val(order.Status);
                 $('#edit-order-modal').data('orderID', order.OrderID); // Store orderID in the modal
                 editOrderModal.show();
@@ -309,7 +321,7 @@
             const status = $('#edit-status').val();
 
             $.ajax({
-                url: `http://localhost:3000/orders/${orderID}`,
+                url: `${apiUrl}/orders/${orderID}`,
                 type: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify({ Status: status }),
@@ -335,7 +347,7 @@
             // Set up the delete confirmation button
             $('#confirm-delete-btn').click(function () {
                 $.ajax({
-                    url: `http://localhost:3000/orders/${orderID}`,
+                    url: `${apiUrl}/orders/${orderID}`,
                     type: 'DELETE',
                     success: function () {
                         fetchOrders();  // Call fetchOrders after deletion

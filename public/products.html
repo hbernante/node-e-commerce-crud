@@ -124,7 +124,19 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(async function () {
+        let apiUrl;
+
+        // Fetch API_URL from the server
+        try {
+            const configResponse = await fetch('/config');
+            const config = await configResponse.json();
+            apiUrl = config.API_URL;
+        } catch (error) {
+            console.error("Error fetching API_URL from server:", error);
+            return;
+        }
+
         const addProductModal = new bootstrap.Modal(document.getElementById('add-product-modal'));
         const deleteConfirmationModal = new bootstrap.Modal(document.getElementById('delete-confirmation-modal'));
         const editProductModal = new bootstrap.Modal(document.getElementById('edit-product-modal'));
@@ -158,7 +170,7 @@
 
         // Fetch and display products
         function fetchProducts() {
-            $.get('http://localhost:3000/products', function (data) {
+            $.get(`${apiUrl}/products`, function (data) {
                 const tableBody = $('#productTableBody');
                 tableBody.empty();
                 data.forEach(product => {
@@ -195,7 +207,7 @@
             };
 
             $.ajax({
-                url: 'http://localhost:3000/products',
+                url: `${apiUrl}/products`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(productData),
@@ -232,7 +244,7 @@
             };
 
             $.ajax({
-                url: `http://localhost:3000/products/${productData.ProductID}`,
+                url: `${apiUrl}/products/${productData.ProductID}`,
                 type: 'PUT',
                 contentType: 'application/json',
                 data: JSON.stringify(productData),
@@ -259,7 +271,7 @@
         $('#confirm-delete-button').click(function () {
             if (productToDelete) {
                 $.ajax({
-                    url: `http://localhost:3000/products/${productToDelete}`,
+                    url: `${apiUrl}/products/${productToDelete}`,
                     type: 'DELETE',
                     success: function () {
                         fetchProducts();
@@ -276,5 +288,4 @@
         // Fetch products on page load
         fetchProducts();
     });
-
 </script>

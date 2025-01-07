@@ -1,29 +1,41 @@
+// Load environment variables
+require('dotenv').config();
+
+const apiUrl = process.env.API_URL || 'http://localhost:3000';
+
 const express = require("express");
 const sql = require("mssql");
 const cors = require("cors");
-
+const path = require('path');
 const app = express();
 
-// CORS configuration
-const corsOptions = {
-  origin: "https://node-bootstrap-app-cgedevh0hhdtckca.southeastasia-01.azurewebsites.net/",  // Replace with the actual frontend URL
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true,  // If you need credentials (like cookies)
-};
-app.use(cors(corsOptions));  // Apply CORS policy
-
+app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'assets')));
 
 // Azure SQL Database configuration
 const dbConfig = {
-  user: "hbernante",
-  password: "H@nzel-010803.W1zard",
-  server: "hbernante.database.windows.net",
-  database: "cloud_database_setup",
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_DATABASE,
   options: {
-    encrypt: true, // Use encryption for Azure SQL
+    encrypt: process.env.DB_ENCRYPT === 'true', // Convert string to boolean
   },
 };
+
+// Add a route to expose the `apiUrl` for client-side use
+// app.get("/config", (req, res) => {
+//   res.json({ apiUrl });
+// });
+
+// server.js
+app.get('/config', (req, res) => {
+  res.json({ API_URL: process.env.API_URL });
+});
+
+
 
 // API for Users
 app.get("/users", async (req, res) => {
@@ -345,7 +357,8 @@ app.delete("/orders/:orderID", async (req, res) => {
   }
 });
 
-const PORT = 3000;
+// Listen on the configured port
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on ${apiUrl}`);
 });
