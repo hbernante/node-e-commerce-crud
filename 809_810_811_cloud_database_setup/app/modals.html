@@ -1,0 +1,61 @@
+<!-- modals.html -->
+
+<!-- Add Modal -->
+<div class="modal fade" id="add-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-form">
+                    <div class="mb-3">
+                        <input type="text" id="add-user-name" class="form-control" placeholder="Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" id="add-user-email" class="form-control" placeholder="Email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit and Delete Modal -->
+<div class="modal fade" id="edit-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="dropdown">
+                    <button class="btn  dropdown-toggle" type="button" id="editModalDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="editModalDropdown">
+                        <li><button id="delete-user-button" class="dropdown-item text-danger"><i class="bi bi-trash"></i> Delete User</button></li>
+                    </ul>
+                </div>
+                <h5 class="modal-title ms-2">Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-form">
+                    <input type="hidden" id="edit-user-id">
+                    <input type="hidden" id="edit-user-customer-id">
+                    <div class="mb-3 form-floating">
+                        <input type="text" id="edit-user-name" class="form-control" placeholder="Name" required>
+                        <label for="edit-user-name">Name</label>
+                    </div>
+                    <div class="mb-3 form-floating">
+                        <input type="email" id="edit-user-email" class="form-control" placeholder="Email" required>
+                        <label for="edit-user-email">Email</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-2">
+                        <i class="bi bi-pencil"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

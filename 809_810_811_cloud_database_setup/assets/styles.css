@@ -1,0 +1,129 @@
+/* Sidebar Styling */
+.sidebar {
+    height: 100vh; /* Full screen height */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 250px;
+    background-color: #343a40;
+    padding-top: 20px;
+    transition: 0.3s;
+}
+
+.sidebar .nav-link {
+    color: #fff;
+}
+
+.sidebar .nav-link.active {
+    background-color: #007bff;
+}
+
+/* Main content area (fixed height and white background) */
+.main-content {
+    margin-left: 250px; /* Space for the sidebar */
+    padding: 20px;
+    height: 100vh; /* Full screen height */
+    background-color: #ffffff; /* White background */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    transition: margin-left 0.3s;
+}
+
+/* Sidebar toggle button styling */
+.sidebar-toggle {
+    position: absolute;
+    top: 20px;
+    right: -40px; /* Adjust position to be outside the sidebar */
+    background-color: #424b55;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 110;
+    transition: right 0.3s;
+}
+
+/* Adjust position when sidebar is shown */
+.sidebar.show .sidebar-toggle {
+    right: 20px;
+}
+
+/*Modal Icons*/
+/* Style the action icons */
+.action-icon {
+    font-size: 1.2rem; /* Make the icon smaller */
+    transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition for hover effects */
+}
+
+/* Style for the buttons */
+.action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent; /* Start with no border */
+    transition: border 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for outline */
+}
+
+/* Button hover and focus outline effect */
+.action-button:hover,
+.action-button:focus {
+    border-color: #007bff; /* Outline color on hover/focus */
+    color: #007bff; /* Change color to blue when hovered */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Soft outline effect */
+}
+
+/* Optional: Adjust button size */
+.btn-sm {
+    padding: 0.3rem 1.6rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Sorting button styling */
+.sort-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+
+
+/* Ensure single line titles on smaller devices */
+@media (max-width: 768px) {
+    th {
+        white-space: nowrap;
+    }
+}
+
+/* Mobile responsiveness: Sidebar and button */
+@media (max-width: 768px) {
+    .sidebar {
+        position: absolute;
+        width: 200px;
+        left: -220px; /* Adjusted to ensure the toggle button is visible */
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    /* Show toggle button on mobile */
+    .sidebar-toggle {
+        display: block;
+        right: -40px; /* Ensure the toggle button is visible */
+    }
+}
+
+/* Hide toggle button on larger screens */
+@media (min-width: 769px) {
+    .sidebar-toggle {
+        display: none;
+    }
+}
