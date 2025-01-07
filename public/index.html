@@ -6,18 +6,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard SQL</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="/assets/styles.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+        rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/script.js" defer></script>
 </head>
+
+<style>
+    /* Sidebar Styling */
+    .sidebar {
+        height: 100vh;
+        /* Full screen height */
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        width: 250px;
+        background-color: #343a40;
+        padding-top: 20px;
+        transition: 0.3s;
+    }
+
+    .sidebar .nav-link {
+        color: #fff;
+    }
+
+    .sidebar .nav-link.active {
+        background-color: #007bff;
+    }
+
+    /* Main content area (fixed height and white background) */
+    .main-content {
+        margin-left: 250px;
+        /* Space for the sidebar */
+        padding: 20px;
+        height: 100vh;
+        /* Full screen height */
+        background-color: #ffffff;
+        /* White background */
+        overflow-y: auto;
+        /* Allow scrolling if content overflows */
+        transition: margin-left 0.3s;
+    }
+
+    /* Sidebar toggle button styling */
+    .sidebar-toggle {
+        position: absolute;
+        top: 20px;
+        right: -40px;
+        /* Adjust position to be outside the sidebar */
+        background-color: #424b55;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 110;
+        transition: right 0.3s;
+    }
+
+    /* Adjust position when sidebar is shown */
+    .sidebar.show .sidebar-toggle {
+        right: 20px;
+    }
+
+    /*Modal Icons*/
+    /* Style the action icons */
+    .action-icon {
+        font-size: 1.2rem;
+        /* Make the icon smaller */
+        transition: transform 0.3s ease, color 0.3s ease;
+        /* Smooth transition for hover effects */
+    }
+
+    /* Style for the buttons */
+    .action-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid transparent;
+        /* Start with no border */
+        transition: border 0.3s ease, box-shadow 0.3s ease;
+        /* Smooth transition for outline */
+    }
+
+    /* Button hover and focus outline effect */
+    .action-button:hover,
+    .action-button:focus {
+        border-color: #007bff;
+        /* Outline color on hover/focus */
+        color: #007bff;
+        /* Change color to blue when hovered */
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+        /* Soft outline effect */
+    }
+
+    /* Optional: Adjust button size */
+    .btn-sm {
+        padding: 0.3rem 1.6rem;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Sorting button styling */
+    .sort-button {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+
+
+    /* Ensure single line titles on smaller devices */
+    @media (max-width: 768px) {
+        th {
+            white-space: nowrap;
+        }
+    }
+
+    /* Mobile responsiveness: Sidebar and button */
+    @media (max-width: 768px) {
+        .sidebar {
+            position: absolute;
+            width: 200px;
+            left: -220px;
+            /* Adjusted to ensure the toggle button is visible */
+        }
+
+        .sidebar.show {
+            left: 0;
+        }
+
+        .main-content {
+            margin-left: 0;
+        }
+
+        /* Show toggle button on mobile */
+        .sidebar-toggle {
+            display: block;
+            right: -40px;
+            /* Ensure the toggle button is visible */
+        }
+    }
+
+    /* Hide toggle button on larger screens */
+    @media (min-width: 769px) {
+        .sidebar-toggle {
+            display: none;
+        }
+    }
+</style>
 
 <body class="bg-light">
     <!-- Sidebar -->
     <div id="sidebar" class="sidebar">
         <div class="text-center py-3">
-            <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" class="img-fluid" style="max-width: 50px;">
+            <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" class="img-fluid"
+                style="max-width: 50px;">
             <h4 class="text-white">E-Commerce</h4>
         </div>
         <ul class="nav flex-column" id="sidebar-menu">
@@ -63,5 +210,211 @@
         <!-- Modals will be dynamically injected here -->
     </div>
 </body>
+
+<script>
+    $(document).ready(function () {
+        const itemsPerPage = 10;
+        let currentPage = 1;
+
+        // Initialize modals only after modals.html is loaded
+        function initializeModals() {
+            const addModalElement = $("#add-modal")[0];
+            const editModalElement = $("#edit-modal")[0];
+
+            if (addModalElement && editModalElement) {
+                const addModal = new bootstrap.Modal(addModalElement);
+                const editModal = new bootstrap.Modal(editModalElement);
+
+                // Add user form submission
+                $("#add-form").on("submit", async function (e) {
+                    e.preventDefault();
+                    const name = $("#add-user-name").val();
+                    const email = $("#add-user-email").val();
+
+                    try {
+                        const response = await fetch("http://localhost:3000/users", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ Name: name, Email: email }),
+                        });
+
+                        if (!response.ok) {
+                            throw new Error("Failed to add user");
+                        }
+
+                        addModal.hide();
+                        fetchData();
+                    } catch (error) {
+                        console.error("Error adding user:", error);
+                    }
+                });
+
+                // Edit user form submission
+                $("#edit-form").on("submit", async function (e) {
+                    e.preventDefault();
+                    const id = $("#edit-user-id").val();
+                    const name = $("#edit-user-name").val();
+                    const email = $("#edit-user-email").val();
+                    const customerId = $("#edit-user-customer-id").val();
+
+                    try {
+                        const response = await fetch(`http://localhost:3000/users/${id}`, {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                Name: name,
+                                Email: email,
+                                CustomerID: customerId,
+                            }),
+                        });
+
+                        if (!response.ok) {
+                            throw new Error("Failed to update user");
+                        }
+
+                        editModal.hide();
+                        fetchData();
+                    } catch (error) {
+                        console.error("Error editing user:", error);
+                    }
+                });
+
+                // Delete user inside edit modal
+                $("#delete-user-button").on("click", async function () {
+                    const id = $("#edit-user-id").val();
+
+                    try {
+                        const response = await fetch(`http://localhost:3000/users/${id}`, {
+                            method: "DELETE",
+                        });
+
+                        if (!response.ok) {
+                            throw new Error("Failed to delete user");
+                        }
+
+                        editModal.hide();
+                        fetchData();
+                    } catch (error) {
+                        console.error("Error deleting user:", error);
+                    }
+                });
+
+                // Modal opening functions (Global scope)
+                window.openAddModal = () => addModal.show();
+                window.openEditModal = (id, name, email, customerId) => {
+                    $("#edit-user-id").val(id);
+                    $("#edit-user-name").val(name);
+                    $("#edit-user-email").val(email);
+                    $("#edit-user-customer-id").val(customerId);
+
+                    editModal.show();
+                };
+            } else {
+                console.error("Modals are not found in the DOM.");
+            }
+        }
+
+        // Load modals and initialize them after loading
+        $.get("modals.html", function (html) {
+            $("#modals-placeholder").html(html);
+            initializeModals(); // Run after the HTML content is injected
+        }).fail(function () {
+            console.error("Error loading modals.");
+        });
+
+        // Fetch and display data with pagination
+        async function fetchData(page = 1) {
+            currentPage = page;
+
+            try {
+                const response = await fetch("http://localhost:3000/users");
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch users");
+                }
+
+                const tableBody = $("#data-table tbody");
+                tableBody.empty();
+
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const paginatedData = data.slice(start, end);
+
+                paginatedData.forEach((user) => {
+                    const row = `
+                    <tr>
+                        <td>${user.ID}</td>
+                        <td>${user.Name}</td>
+                        <td>${user.Email}</td>
+                        <td>${user.CustomerID}</td>
+                        <td>
+                            <button class="btn btn-sm action-button" onclick="openEditModal(${user.ID}, '${user.Name}', '${user.Email}', '${user.CustomerID}')">
+                                <i class="bi bi-pencil-square action-icon"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                    tableBody.append(row);
+                });
+
+                updatePaginationControls(data.length);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Update pagination controls
+        function updatePaginationControls(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const paginationControls = $("#pagination-controls");
+            paginationControls.empty();
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageItem = $(
+                    `<li class="page-item ${i === currentPage ? "active" : ""
+                    }"><a class="page-link" href="#">${i}</a></li>`
+                );
+                pageItem.on("click", () => fetchData(i));
+                paginationControls.append(pageItem);
+            }
+        }
+
+        // Sidebar toggle for mobile devices
+        const toggleButton = document.getElementById("sidebar-toggle");
+        const sidebar = document.getElementById("sidebar");
+        const mainContent = document.querySelector(".main-content");
+
+        toggleButton.addEventListener("click", function () {
+            sidebar.classList.toggle("show");
+            mainContent.classList.toggle("collapsed");
+        });
+
+        // Handle sidebar menu item clicks
+        const menuItems = document.querySelectorAll("#sidebar-menu .nav-link");
+        menuItems.forEach((item) => {
+            item.addEventListener("click", function (event) {
+                event.preventDefault();
+
+                menuItems.forEach((link) => link.classList.remove("active"));
+                item.classList.add("active");
+
+                const target = item.getAttribute("data-target");
+                showContent(target);
+            });
+        });
+
+        // Function to dynamically load content into #content-placeholder
+        function showContent(target) {
+            $("#content-placeholder").load(`${target}.html`, function () {
+                if (target === "users") fetchData();
+            });
+        }
+
+        // Load initial content (Dashboard)
+        $("#content-placeholder").load("dashboard.html");
+    });
+
+</script>
 
 </html>
