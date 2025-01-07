@@ -6,16 +6,26 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Azure SQL Database configuration
+const path = require('path');
+
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Fallback to index.html for unmatched routes (optional for SPA)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 const dbConfig = {
-  user: "hbernante",
-  password: "H@nzel-010803.W1zard",
-  server: "hbernante.database.windows.net",
-  database: "cloud_database_setup",
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_NAME,
   options: {
-    encrypt: true, // Use encryption for Azure SQL
+    encrypt: true,
   },
 };
+
 
 // API for Users
 app.get("/users", async (req, res) => {
