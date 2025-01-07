@@ -8,10 +8,21 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "mssql": "^11.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hbernante/node-e-commerce-crud.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hbernante/node-e-commerce-crud/issues"
+  },
+  "homepage": "https://github.com/hbernante/node-e-commerce-crud#readme",
+  "description": "",
+  "engines": {
+    "node": "18.x"
   }
 }
