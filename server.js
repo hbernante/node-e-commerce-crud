@@ -16,16 +16,25 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// const dbConfig = {
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   server: process.env.DB_SERVER,
+//   database: process.env.DB_NAME,
+//   options: {
+//     encrypt: true,
+//   },
+// };
+
 const dbConfig = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_SERVER,
-  database: process.env.DB_NAME,
+  user: "hbernante",
+  password: "H@nzel-010803.W1zard",
+  server: "hbernante.database.windows.net",
+  database: "cloud_database_setup",
   options: {
-    encrypt: true,
+    encrypt: true, // Use encryption for Azure SQL
   },
 };
-
 
 // API for Users
 app.get("/users", async (req, res) => {
