@@ -3,7 +3,15 @@ const sql = require("mssql");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+
+// CORS configuration
+const corsOptions = {
+  origin: "https://node-bootstrap-app-cgedevh0hhdtckca.southeastasia-01.azurewebsites.net/",  // Replace with the actual frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,  // If you need credentials (like cookies)
+};
+app.use(cors(corsOptions));  // Apply CORS policy
+
 app.use(express.json());
 
 // Azure SQL Database configuration
