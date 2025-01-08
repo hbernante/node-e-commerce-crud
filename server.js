@@ -26,16 +26,9 @@ const dbConfig = {
 };
 
 // Add a route to expose the `apiUrl` for client-side use
-// app.get("/config", (req, res) => {
-//   res.json({ apiUrl });
-// });
-
-// server.js
 app.get('/config', (req, res) => {
   res.json({ API_URL: process.env.API_URL });
 });
-
-
 
 // API for Users
 app.get("/users", async (req, res) => {

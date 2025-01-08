@@ -31,3 +31,21 @@
         </ul>
     </nav>
 </div>
+
+<script>
+    $(document).ready(async function () {
+        let apiUrl;
+
+        // Fetch API_URL from the server
+        try {
+            const configResponse = await fetch('/config');
+            const config = await configResponse.json();
+            apiUrl = config.API_URL;
+        } catch (error) {
+            console.error("Error fetching API_URL from server:", error);
+            return;
+        }
+
+        // ...existing code...
+    });
+</script>
